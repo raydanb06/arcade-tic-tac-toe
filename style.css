@@ -1,0 +1,14 @@
+* {
+    box-sizing: border-box;
+  }
+  main {
+    display: flex;
+    width: 90vh;
+    flex-wrap: wrap;
+  }
+  .cell {
+    width: 30vh;
+    height: 30vh;
+    font-size: 12vh;
+    border: 1px solid black;
+  }
