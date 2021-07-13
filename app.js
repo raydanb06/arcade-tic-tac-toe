@@ -1,55 +1,102 @@
-// TESTING
-let testElem = document.querySelector('#board');
-console.log('testElem', testElem);
+// ****** TESTING ******
+const testElem = document.querySelector('#board');
+// console.log('testElem', testElem);
 
-// STATE
-let state = {};
+// ****** STATE ******
+const state = {};
 
-function resetState() {
+const resetState = () => {
     state.board = [ null, null, null,
                     null, null, null,
                     null, null, null, ];
+    state.getCurrentPlayer = () => state.players[state.currentPlayerIdx];
+    state.players = ['',''];
+    state.currentPlayerIdx = 0;
+    state.start = 0;
 }
 
-// DOM SELECTORS
-let boardElem = document.querySelector('#board');
-console.log('boardElem', boardElem);
+// ****** DOM SELECTORS ******
+const boardElem = document.querySelector('#board');
+// console.log('boardElem', boardElem);
 
-let resetButtonElem = document.querySelector('#resetButton');
-console.log('resetButtonElem', resetButtonElem);
+const playerTurnElem = document.querySelector('#player-turn');
+// console.log('playerTurnElem', playerTurnElem);
 
-// DOM MANIPULATION FUNCTIONS
-function renderBoard() {
+// ****** GAME LOGIC HELPER FUNCTIONS ******
+const changeTurn = () => {
+    state.currentPlayerIdx = (state.currentPlayerIdx + 1) % 2;
+}
+
+// ****** DOM MANIPULATION FUNCTIONS ******
+const renderBoard = () => {
    // empty the element
    boardElem.innerText = '';
    for(let i = 0; i < state.board.length; i++){
-     let card = state.board[i];
+     const cell = state.board[i];
      // create a cell
-     let cellElem = document.createElement('div');
+     const cellElem = document.createElement('div');
      cellElem.classList.add('cell');
      cellElem.dataset.index = i;
-     cellElem.innerHTML = card;
+     cellElem.innerHTML = cell;
      boardElem.appendChild(cellElem);
     }
 }
 
-// EVENT LISTENERS
-boardElem.addEventListener('click', function(event) {
-    let cellIdx = event.target.dataset.index;
-    
-    if(event.target.className === 'cell' && state.board[cellIdx] === null) {
-        console.log('event.target: ', event.target);
-        console.log('cellIdx: ', cellIdx);
-        state.board[cellIdx] = 'X'
-        renderBoard();
-      }
-})
+const renderPlayer = () => {
+    let text;
 
-resetButtonElem.addEventListener('click', function(event) {
-    resetState();
+    if(!state.players[0] || !state.players[1]) {
+        text = `
+            <input name="player1" placeholder="Enter Player 1">
+            <input name="player2" placeholder="Enter Player 2">
+            <button class="start">Start</button>
+        `
+    } else {
+        text =  `It's currently ${state.getCurrentPlayer()}'s turn.`;
+        state.start = 1;
+    }
+    playerTurnElem.innerHTML = text;
+}
+
+const render = () => {
     renderBoard();
-})
+    renderPlayer();
+}
 
-// BOOTSTRAPPING
+// ****** EVENT LISTENERS ******
+boardElem.addEventListener('click', function(event) {
+    const cellIdx = event.target.dataset.index;
+    
+    if (state.start === 0) {
+        return;
+    } else {
+        if(event.target.className === 'cell' && state.board[cellIdx] === null) {
+            if(state.currentPlayerIdx === 0) {
+                // console.log('event.target: ', event.target);
+                // console.log('cellIdx: ', cellIdx);
+                state.board[cellIdx] = 'X'
+                changeTurn();
+                render();
+            } else {
+                state.board[cellIdx] = 'O'
+                changeTurn();
+                render();
+            }
+        } 
+    }
+    
+});
+
+playerTurnElem.addEventListener('click', function(event) {
+    if (event.target.className !== 'start') return;
+    console.log('foo');
+    const player1Input = document.querySelector('input[name=player1]');
+    state.players[0] = player1Input.value;
+    const player2Input = document.querySelector('input[name=player2]');
+    state.players[1] = player2Input.value;
+    render();  
+  });
+
+// ****** BOOTSTRAPPING ******
 resetState();
-renderBoard();
+render();
