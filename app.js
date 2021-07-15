@@ -2,6 +2,7 @@
 const testElem = document.querySelector('#board');
 // console.log('testElem', testElem);
 
+
 // ****** STATE ******
 const state = {};
 
@@ -11,9 +12,12 @@ const resetState = () => {
                     null, null, null, ];
     state.getCurrentPlayer = () => state.players[state.currentPlayerIdx];
     state.players = ['',''];
-    state.currentPlayerIdx = 0;
+    state.currentPlayerIdx = Math.floor(Math.random() * state.players.length);
+    // console.log(state.currentPlayerIdx);
     state.start = 0;
+    state.scores = [0,0];
 }
+
 
 // ****** DOM SELECTORS ******
 const boardElem = document.querySelector('#board');
@@ -22,10 +26,15 @@ const boardElem = document.querySelector('#board');
 const playerTurnElem = document.querySelector('#player-turn');
 // console.log('playerTurnElem', playerTurnElem);
 
+const scoresElem = document.querySelector('#scores');
+// console.log('scoresElem', scoresElem);
+
+
 // ****** GAME LOGIC HELPER FUNCTIONS ******
 const changeTurn = () => {
     state.currentPlayerIdx = (state.currentPlayerIdx + 1) % 2;
 }
+
 
 // ****** DOM MANIPULATION FUNCTIONS ******
 const renderBoard = () => {
@@ -49,19 +58,29 @@ const renderPlayer = () => {
         text = `
             <input name="player1" placeholder="Enter Player 1">
             <input name="player2" placeholder="Enter Player 2">
-            <button class="start">Start</button>
-        `
+            <button class="start">Start Game</button>
+        `;
     } else {
-        text =  `It's currently ${state.getCurrentPlayer()}'s turn.`;
+        text =  `It's currently ${state.getCurrentPlayer()}'s turn.
+                <button class="new-game">New Game</button>`;
         state.start = 1;
     }
     playerTurnElem.innerHTML = text;
 }
 
+const renderScores = () => {
+    scoresElem.innerHTML = `
+        <div>${state.players[0]}: ${state.scores[0]}</div>
+        <div>${state.players[1]}: ${state.scores[1]}</div>
+        `;
+}
+
 const render = () => {
+    renderScores();
     renderBoard();
     renderPlayer();
 }
+
 
 // ****** EVENT LISTENERS ******
 boardElem.addEventListener('click', function(event) {
@@ -89,14 +108,22 @@ boardElem.addEventListener('click', function(event) {
 
 playerTurnElem.addEventListener('click', function(event) {
     if (event.target.className !== 'start') return;
-    console.log('foo');
+    // console.log('foo');
     const player1Input = document.querySelector('input[name=player1]');
     state.players[0] = player1Input.value;
     const player2Input = document.querySelector('input[name=player2]');
     state.players[1] = player2Input.value;
     render();  
   });
+  
+  playerTurnElem.addEventListener('click', function(event) {
+    if (event.target.className === 'new-game') {
+        resetState();
+        render();
+    }
+  });
 
+  
 // ****** BOOTSTRAPPING ******
 resetState();
 render();
