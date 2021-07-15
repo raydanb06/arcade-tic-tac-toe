@@ -35,6 +35,26 @@ const changeTurn = () => {
     state.currentPlayerIdx = (state.currentPlayerIdx + 1) % 2;
 }
 
+const takeTurn = (cellIdx) => {
+    if (state.start === 0) {
+        return;
+    } else {
+        if(state.board[cellIdx] === null) {
+            if(state.currentPlayerIdx === 0) {
+                // console.log('event.target: ', event.target);
+                // console.log('cellIdx: ', cellIdx);
+                state.board[cellIdx] = 'X'
+                changeTurn();
+                render();
+            } else {
+                state.board[cellIdx] = 'O'
+                changeTurn();
+                render();
+            }
+        } 
+    }
+}
+
 
 // ****** DOM MANIPULATION FUNCTIONS ******
 const renderBoard = () => {
@@ -84,26 +104,9 @@ const render = () => {
 
 // ****** EVENT LISTENERS ******
 boardElem.addEventListener('click', function(event) {
+    if (event.target.className !== 'cell') return;
     const cellIdx = event.target.dataset.index;
-    
-    if (state.start === 0) {
-        return;
-    } else {
-        if(event.target.className === 'cell' && state.board[cellIdx] === null) {
-            if(state.currentPlayerIdx === 0) {
-                // console.log('event.target: ', event.target);
-                // console.log('cellIdx: ', cellIdx);
-                state.board[cellIdx] = 'X'
-                changeTurn();
-                render();
-            } else {
-                state.board[cellIdx] = 'O'
-                changeTurn();
-                render();
-            }
-        } 
-    }
-    
+    takeTurn(cellIdx);
 });
 
 playerTurnElem.addEventListener('click', function(event) {
@@ -123,7 +126,7 @@ playerTurnElem.addEventListener('click', function(event) {
     }
   });
 
-  
+
 // ****** BOOTSTRAPPING ******
 resetState();
 render();
