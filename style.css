@@ -3,14 +3,14 @@
   }
   main {
     display: flex;
-    width: 90vh;
+    width: 60vh;
     flex-wrap: wrap;
   }
   .cell {
     display: flex;
-    width: 30vh;
-    height: 30vh;
-    font-size: 12vh;
+    width: 20vh;
+    height: 20vh;
+    font-size: 10vh;
     align-items: center;
     justify-content: center;
   }
