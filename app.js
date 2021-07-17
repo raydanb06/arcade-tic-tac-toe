@@ -27,7 +27,6 @@ const newGameState = () => {
     state.getCurrentPlayer = () => state.players[state.currentPlayerIdx];
     state.currentPlayerIdx = Math.floor(Math.random() * state.players.length);
     // console.log(state.currentPlayerIdx);
-    state.start = 0;
 }
 
 
@@ -52,9 +51,9 @@ const changeTurn = () => {
 const takeTurn = (cellIdx) => {
     if (state.start === 0) {
         return;
-    } else {
-        if(state.board[cellIdx] === null) {
-            if(state.currentPlayerIdx === 0) {
+    } else if (state.start === 1) {
+        if (state.board[cellIdx] === null) {
+            if (state.currentPlayerIdx === 0) {
                 // console.log('event.target: ', event.target);
                 // console.log('cellIdx: ', cellIdx);
                 state.board[cellIdx] = 'X'
@@ -67,6 +66,11 @@ const takeTurn = (cellIdx) => {
                 changeTurn();
                 render();
             }
+        }
+    }
+    else if (state.start === 2) {
+        if (state.getCurrentPlayer() === "Computer") {
+            state.board[2] = "O"
         }
     }
 };
@@ -137,18 +141,19 @@ const renderBoard = () => {
 const renderPlayer = () => {
     let text;
 
-    if(!state.players[0] || !state.players[1]) {
+    if(!state.players[0] && !state.players[1]) {
         text = `
             <input name="player1" placeholder="Enter Player 1">
             <input name="player2" placeholder="Enter Player 2">
             <button class="start">Start Game</button>
         `;
-    } else {
+    }
+    else if (state.players[0] && state.players[1]) {
         text =  `It's currently ${state.getCurrentPlayer()}'s turn.
                 <button class="new-game">New Game</button>
                 <button class="reset">Reset</button>
                 `;
-        state.start = 2;
+        state.start = 1;
     }
     playerTurnElem.innerHTML = text;
 };
