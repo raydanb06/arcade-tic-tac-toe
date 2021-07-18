@@ -141,14 +141,23 @@ const renderBoard = () => {
 const renderPlayer = () => {
     let text;
 
-    if(!state.players[0] && !state.players[1]) {
+    if (!state.players[0] && !state.players[1]) {
         text = `
             <input name="player1" placeholder="Enter Player 1">
             <input name="player2" placeholder="Enter Player 2">
             <button class="start">Start Game</button>
+            <button class="1playermode">Single Player</button>
+            <div id="note">Enter Player 1 name and click Single Player to play against computer.</div>
         `;
     }
-    else if (state.players[0] && state.players[1]) {
+    else if (state.players[0] === "Computer" || state.players[1] === "Computer") {
+        text = `It's ${state.getCurrentPlayer()}'s turn.
+                <button class="new-game">New Game</button>
+                <button class="reset">Reset</button>
+                `;
+        state.start = 2;
+    }
+    else if (state.players[0] || state.players[1]) {
         text =  `It's currently ${state.getCurrentPlayer()}'s turn.
                 <button class="new-game">New Game</button>
                 <button class="reset">Reset</button>
@@ -200,7 +209,16 @@ playerTurnElem.addEventListener('click', function(event) {
         resetState();
         render();
     }
-  });
+});
+
+playerTurnElem.addEventListener('click', function(event) {
+    if (event.target.className === '1playermode') {
+        const player1Input = document.querySelector('input[name=player1]');
+        state.players[0] = player1Input.value;
+        state.players[1] = "Computer";
+        render();
+    }
+});
 
 
 // ****** BOOTSTRAPPING ******
