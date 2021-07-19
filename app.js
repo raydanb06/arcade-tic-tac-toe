@@ -51,7 +51,8 @@ const changeTurn = () => {
 const takeTurn = (cellIdx) => {
     if (state.start === 0) {
         return;
-    } else if (state.start === 1) {
+    } 
+    else if (state.start === 1) {
         if (state.board[cellIdx] === null) {
             if (state.currentPlayerIdx === 0) {
                 // console.log('event.target: ', event.target);
@@ -60,7 +61,8 @@ const takeTurn = (cellIdx) => {
                 checkWin();
                 changeTurn();
                 render();
-            } else {
+            } 
+            else {
                 state.board[cellIdx] = 'O'
                 checkWin();
                 changeTurn();
@@ -69,9 +71,13 @@ const takeTurn = (cellIdx) => {
         }
     }
     else if (state.start === 2) {
-        if (state.getCurrentPlayer() === "Computer") {
-            state.board[2] = "O"
+        if (state.getCurrentPlayer() !== "Computer") {
+            state.board[cellIdx] = 'X'
+            checkWin();
+            changeTurn();
+            render();
         }
+        computerTurn();
     }
 };
 
@@ -120,6 +126,19 @@ const checkWin = () => {
     else if (state.board.every(isNotNull)) {
         winnerElem.innerHTML = "Game is a draw!";
         newGameState();
+    }
+};
+
+const computerTurn = () => {
+    let randCellIdx = Math.floor(Math.random() * state.board.length);
+    if (state.board[randCellIdx] === null) {
+        state.board[randCellIdx] = 'O'
+        checkWin();
+        changeTurn();
+        render();
+    }
+    else {
+        computerTurn();
     }
 };
 
